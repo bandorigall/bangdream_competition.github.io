@@ -11,7 +11,6 @@
             --card-bg: #ffffff;
             --primary: #333333;
             --secondary: #666666;
-            --accent: #e91e63; /* 뱅드림 테마색 느낌 */
             --border: #e0e0e0;
             --shadow: 0 4px 6px rgba(0,0,0,0.1);
             --hover-shadow: 0 8px 12px rgba(0,0,0,0.15);
@@ -29,6 +28,9 @@
         .container {
             max-width: 1200px;
             margin: 0 auto;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
         }
 
         header {
@@ -81,6 +83,7 @@
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
             gap: 20px;
+            flex: 1;
         }
 
         .card {
@@ -102,7 +105,7 @@
         .card:hover {
             transform: translateY(-5px);
             box-shadow: var(--hover-shadow);
-            border-color: var(--accent);
+            border-color: #333;
         }
 
         .card-header {
@@ -147,25 +150,53 @@
             padding: 6px 12px;
             border-radius: 20px;
             font-size: 14px;
-            font-weight: 600;
-            background-color: var(--accent);
+            font-weight: 700;
             color: white;
             width: fit-content;
         }
 
+        /* 상태별 색상 정의 */
         .timer-badge.ended {
             background-color: var(--secondary);
         }
         
-        .timer-badge.urgent {
-            background-color: #d32f2f; /* 매우 임박 시 빨간색 */
+        /* 3일 미만: 엄청 빨간색 + 펄스 애니메이션 */
+        .timer-badge.critical {
+            background-color: #d32f2f; 
             animation: pulse 2s infinite;
+        }
+
+        /* 7일 미만: 주황색 */
+        .timer-badge.warning {
+            background-color: #f57c00;
+        }
+
+        /* 30일 미만: 노란색 (가독성을 위해 글자색 검정) */
+        .timer-badge.notice {
+            background-color: #fbc02d;
+            color: #333333;
+        }
+
+        /* 30일 이상: 초록색 */
+        .timer-badge.safe {
+            background-color: #388e3c;
         }
 
         @keyframes pulse {
             0% { opacity: 1; }
             50% { opacity: 0.8; }
             100% { opacity: 1; }
+        }
+
+        footer {
+            margin-top: 40px;
+            padding-top: 20px;
+            padding-bottom: 10px;
+            border-top: 1px solid var(--border);
+            text-align: center;
+            color: var(--secondary);
+            font-size: 14px;
+            font-weight: 500;
         }
 
     </style>
@@ -192,10 +223,13 @@
 
     <div id="eventGrid" class="grid">
         </div>
+
+    <footer>
+        made by Bangbung Kim
+    </footer>
 </div>
 
 <script>
-    // Python에서 주입된 데이터
     const events = [{"제목": "2025 연말기념 방붕이 연령대 조사", "시작일": "2025-10-31", "종료일": "2025-12-30", "링크": "https://gall.dcinside.com/mgallery/board/view/?id=bang_dream&no=5729461", "주최자_닉": "우이골댕이", "주최자_식별코드": "pine5337", "js_end_date": "2025-12-30 23:59:59"}, {"제목": "2025 연말기념 방붕이 최애밴드 조사", "시작일": "2025-11-18", "종료일": "2025-12-30", "링크": "https://gall.dcinside.com/mgallery/board/view/?id=bang_dream&no=5755602", "주최자_닉": "우이골댕이", "주최자_식별코드": "pine5337", "js_end_date": "2025-12-30 23:59:59"}, {"제목": "조별과제 대회", "시작일": "2025-11-20", "종료일": "2025-12-31 23:59", "링크": "https://gall.dcinside.com/mgallery/board/view/?id=bang_dream&no=5758326", "주최자_닉": "퓨니카", "주최자_식별코드": "attorney2164", "js_end_date": "2025-12-31 23:59"}, {"제목": "천하제일 누이스토리 대회", "시작일": "2025-12-01", "종료일": "2026-02-28", "링크": "https://gall.dcinside.com/mgallery/board/view/?id=bang_dream&no=5774209", "주최자_닉": "ㅇㅇ", "주최자_식별코드": "geyuwukdoch13", "js_end_date": "2026-02-28 23:59:59"}, {"제목": "아베무지카 커버대회", "시작일": "2025-12-15", "종료일": "2026-01-15 23:59", "링크": "https://gall.dcinside.com/mgallery/board/view/?id=bang_dream&no=5798862", "주최자_닉": "iVanEz", "주최자_식별코드": "tide8415", "js_end_date": "2026-01-15 23:59"}, {"제목": "뱅드림의 경지2 시즌2", "시작일": "2025-12-06", "종료일": "2026-02-13 18:00", "링크": "https://gall.dcinside.com/mgallery/board/view/?id=bang_dream&no=5782301", "주최자_닉": "방갤제일검", "주최자_식별코드": "shabby1229", "js_end_date": "2026-02-13 18:00"}, {"제목": "다음내한예측대회", "시작일": "2025-12-25", "종료일": "", "링크": "https://gall.dcinside.com/mgallery/board/view/?id=bang_dream&no=5824373", "주최자_닉": "momokan", "주최자_식별코드": "hers0556", "js_end_date": " 23:59:59"}, {"제목": "세트리 대회", "시작일": "2025-12-26", "종료일": "2026-01-03 00:00", "링크": "https://gall.dcinside.com/mgallery/board/view/?id=bang_dream&no=5826452", "주최자_닉": "미스미_하츠네", "주최자_식별코드": "hunt6910", "js_end_date": "2026-01-03 00:00"}, {"제목": "로젤리아인증", "시작일": "2025-12-03", "종료일": "2025-12-31 23:59", "링크": "https://gall.dcinside.com/mgallery/board/view/?id=bang_dream&no=5777404", "주최자_닉": "야마부키", "주최자_식별코드": "prideofjeju", "js_end_date": "2025-12-31 23:59"}, {"제목": "세타 카오루 랜드 입주하기 대회", "시작일": "2025-12-21", "종료일": "2025-12-31 19:00", "링크": "https://gall.dcinside.com/mgallery/board/view/?id=bang_dream&no=5808703", "주최자_닉": "potato-man", "주최자_식별코드": "nyam007", "js_end_date": "2025-12-31 19:00"}];
 
     function updateClock() {
@@ -210,10 +244,7 @@
 
     function getRemainingTime(endDateStr) {
         const now = new Date();
-        // 날짜 문자열 파싱 (YYYY-MM-DD HH:MM:SS)
-        // 브라우저 호환성을 위해 T 교체
         const end = new Date(endDateStr.replace(' ', 'T'));
-        
         const diff = end - now;
 
         if (diff < 0) {
@@ -229,8 +260,17 @@
         text += hours + '시간 ';
         text += minutes + '분 남음';
 
-        // 3일 미만이면 긴급
-        let status = (days < 3) ? 'urgent' : 'active';
+        // 상태 결정 로직
+        let status = '';
+        if (days < 3) {
+            status = 'critical'; // 빨강
+        } else if (days < 7) {
+            status = 'warning';  // 주황
+        } else if (days < 30) {
+            status = 'notice';   // 노랑
+        } else {
+            status = 'safe';     // 초록
+        }
         
         return { status: status, text: text, diff: diff };
     }
@@ -240,17 +280,12 @@
         const sortType = document.getElementById('sortSelect').value;
         grid.innerHTML = '';
 
-        // 정렬 로직
         const sortedEvents = [...events].sort((a, b) => {
             if (sortType === 'endingSoon') {
-                // 종료일 기준 오름차순 (끝난 것은 뒤로)
                 const timeA = new Date(a.js_end_date.replace(' ', 'T'));
                 const timeB = new Date(b.js_end_date.replace(' ', 'T'));
                 const now = new Date();
                 
-                // 둘 다 종료되었으면 최신 종료가 위로? 아니면 그냥 뒤로.
-                // 여기서는 남은 시간이 적은 순(임박순)으로 정렬
-                // 이미 지난(음수) 값은 아주 큰 값으로 취급해서 뒤로 보내기
                 const diffA = timeA - now;
                 const diffB = timeB - now;
                 
@@ -267,13 +302,11 @@
 
         sortedEvents.forEach(evt => {
             const remaining = getRemainingTime(evt.js_end_date);
-            const badgeClass = remaining.status === 'ended' ? 'ended' : 
-                               (remaining.status === 'urgent' ? 'urgent' : '');
             
             const card = document.createElement('a');
             card.className = 'card';
             card.href = evt.링크;
-            card.target = '_blank'; // 새 탭에서 열기
+            card.target = '_blank';
 
             card.innerHTML = `
                 <div class="card-header">
@@ -287,7 +320,7 @@
                         <div class="date-row"><span>시작:</span> <span>${evt.시작일}</span></div>
                         <div class="date-row"><span>종료:</span> <span>${evt.종료일}</span></div>
                     </div>
-                    <div class="timer-badge ${badgeClass}">
+                    <div class="timer-badge ${remaining.status}">
                         ${remaining.text}
                     </div>
                 </div>
@@ -296,12 +329,9 @@
         });
     }
 
-    // 초기화 및 주기적 업데이트
     setInterval(updateClock, 1000);
     updateClock();
     renderEvents();
-    
-    // 1분마다 남은 시간 갱신 (리렌더링)
     setInterval(renderEvents, 60000);
 
 </script>
