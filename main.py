@@ -15,13 +15,9 @@ def read_csv_data(filename):
     with open(filename, mode='r', encoding='utf-8') as f:
         reader = csv.DictReader(f)
         for row in reader:
-            # 데이터 정제 (날짜 포맷 통일 등 필요한 경우 처리)
-            # 입력 데이터가 'YYYY-MM-DD' 혹은 'YYYY-MM-DD HH:MM' 형식이므로
-            # 자바스크립트에서 처리하기 쉽도록 그대로 넘겨줍니다.
-            # 종료일 시간이 없는 경우 하루의 끝으로 간주하는 처리는 JS에서 해도 되지만
-            # 명확하게 하기 위해 여기서 처리할 수도 있습니다.
+            # 데이터 정제
             end_date = row['종료일']
-            if len(end_date) <= 10: # 'YYYY-MM-DD' 형식인 경우
+            if len(end_date) <= 10: # 'YYYY-MM-DD' 형식인 경우 23:59:59 추가
                 end_date += " 23:59:59"
             
             row['js_end_date'] = end_date
@@ -45,7 +41,6 @@ def generate_html(events):
             --card-bg: #ffffff;
             --primary: #333333;
             --secondary: #666666;
-            --accent: #e91e63; /* 뱅드림 테마색 느낌 */
             --border: #e0e0e0;
             --shadow: 0 4px 6px rgba(0,0,0,0.1);
             --hover-shadow: 0 8px 12px rgba(0,0,0,0.15);
@@ -63,6 +58,9 @@ def generate_html(events):
         .container {{
             max-width: 1200px;
             margin: 0 auto;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
         }}
 
         header {{
@@ -115,6 +113,7 @@ def generate_html(events):
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
             gap: 20px;
+            flex: 1;
         }}
 
         .card {{
@@ -136,7 +135,7 @@ def generate_html(events):
         .card:hover {{
             transform: translateY(-5px);
             box-shadow: var(--hover-shadow);
-            border-color: var(--accent);
+            border-color: #333;
         }}
 
         .card-header {{
@@ -181,25 +180,53 @@ def generate_html(events):
             padding: 6px 12px;
             border-radius: 20px;
             font-size: 14px;
-            font-weight: 600;
-            background-color: var(--accent);
+            font-weight: 700;
             color: white;
             width: fit-content;
         }}
 
+        /* 상태별 색상 정의 */
         .timer-badge.ended {{
             background-color: var(--secondary);
         }}
         
-        .timer-badge.urgent {{
-            background-color: #d32f2f; /* 매우 임박 시 빨간색 */
+        /* 3일 미만: 엄청 빨간색 + 펄스 애니메이션 */
+        .timer-badge.critical {{
+            background-color: #d32f2f; 
             animation: pulse 2s infinite;
+        }}
+
+        /* 7일 미만: 주황색 */
+        .timer-badge.warning {{
+            background-color: #f57c00;
+        }}
+
+        /* 30일 미만: 노란색 (가독성을 위해 글자색 검정) */
+        .timer-badge.notice {{
+            background-color: #fbc02d;
+            color: #333333;
+        }}
+
+        /* 30일 이상: 초록색 */
+        .timer-badge.safe {{
+            background-color: #388e3c;
         }}
 
         @keyframes pulse {{
             0% {{ opacity: 1; }}
             50% {{ opacity: 0.8; }}
             100% {{ opacity: 1; }}
+        }}
+
+        footer {{
+            margin-top: 40px;
+            padding-top: 20px;
+            padding-bottom: 10px;
+            border-top: 1px solid var(--border);
+            text-align: center;
+            color: var(--secondary);
+            font-size: 14px;
+            font-weight: 500;
         }}
 
     </style>
@@ -226,10 +253,13 @@ def generate_html(events):
 
     <div id="eventGrid" class="grid">
         </div>
+
+    <footer>
+        made by Bangbung Kim
+    </footer>
 </div>
 
 <script>
-    // Python에서 주입된 데이터
     const events = {events_json};
 
     function updateClock() {{
@@ -244,10 +274,7 @@ def generate_html(events):
 
     function getRemainingTime(endDateStr) {{
         const now = new Date();
-        // 날짜 문자열 파싱 (YYYY-MM-DD HH:MM:SS)
-        // 브라우저 호환성을 위해 T 교체
         const end = new Date(endDateStr.replace(' ', 'T'));
-        
         const diff = end - now;
 
         if (diff < 0) {{
@@ -263,8 +290,17 @@ def generate_html(events):
         text += hours + '시간 ';
         text += minutes + '분 남음';
 
-        // 3일 미만이면 긴급
-        let status = (days < 3) ? 'urgent' : 'active';
+        // 상태 결정 로직
+        let status = '';
+        if (days < 3) {{
+            status = 'critical'; // 빨강
+        }} else if (days < 7) {{
+            status = 'warning';  // 주황
+        }} else if (days < 30) {{
+            status = 'notice';   // 노랑
+        }} else {{
+            status = 'safe';     // 초록
+        }}
         
         return {{ status: status, text: text, diff: diff }};
     }}
@@ -274,17 +310,12 @@ def generate_html(events):
         const sortType = document.getElementById('sortSelect').value;
         grid.innerHTML = '';
 
-        // 정렬 로직
         const sortedEvents = [...events].sort((a, b) => {{
             if (sortType === 'endingSoon') {{
-                // 종료일 기준 오름차순 (끝난 것은 뒤로)
                 const timeA = new Date(a.js_end_date.replace(' ', 'T'));
                 const timeB = new Date(b.js_end_date.replace(' ', 'T'));
                 const now = new Date();
                 
-                // 둘 다 종료되었으면 최신 종료가 위로? 아니면 그냥 뒤로.
-                // 여기서는 남은 시간이 적은 순(임박순)으로 정렬
-                // 이미 지난(음수) 값은 아주 큰 값으로 취급해서 뒤로 보내기
                 const diffA = timeA - now;
                 const diffB = timeB - now;
                 
@@ -301,13 +332,11 @@ def generate_html(events):
 
         sortedEvents.forEach(evt => {{
             const remaining = getRemainingTime(evt.js_end_date);
-            const badgeClass = remaining.status === 'ended' ? 'ended' : 
-                               (remaining.status === 'urgent' ? 'urgent' : '');
             
             const card = document.createElement('a');
             card.className = 'card';
             card.href = evt.링크;
-            card.target = '_blank'; // 새 탭에서 열기
+            card.target = '_blank';
 
             card.innerHTML = `
                 <div class="card-header">
@@ -321,7 +350,7 @@ def generate_html(events):
                         <div class="date-row"><span>시작:</span> <span>${{evt.시작일}}</span></div>
                         <div class="date-row"><span>종료:</span> <span>${{evt.종료일}}</span></div>
                     </div>
-                    <div class="timer-badge ${{badgeClass}}">
+                    <div class="timer-badge ${{remaining.status}}">
                         ${{remaining.text}}
                     </div>
                 </div>
@@ -330,12 +359,9 @@ def generate_html(events):
         }});
     }}
 
-    // 초기화 및 주기적 업데이트
     setInterval(updateClock, 1000);
     updateClock();
     renderEvents();
-    
-    // 1분마다 남은 시간 갱신 (리렌더링)
     setInterval(renderEvents, 60000);
 
 </script>
