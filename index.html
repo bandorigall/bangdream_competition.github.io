@@ -15,7 +15,6 @@
             --shadow: 0 4px 6px rgba(0,0,0,0.1);
             --hover-shadow: 0 8px 12px rgba(0,0,0,0.15);
         }
-
         body {
             font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
             background-color: var(--bg-color);
@@ -24,7 +23,6 @@
             padding: 20px;
             line-height: 1.6;
         }
-
         .container {
             max-width: 1200px;
             margin: 0 auto;
@@ -32,7 +30,6 @@
             display: flex;
             flex-direction: column;
         }
-
         header {
             display: flex;
             justify-content: space-between;
@@ -43,171 +40,40 @@
             flex-wrap: wrap;
             gap: 15px;
         }
-
-        h1 {
-            margin: 0;
-            font-size: 24px;
-            font-weight: 700;
-        }
-
-        .status-bar {
-            display: flex;
-            gap: 20px;
-            align-items: center;
-            font-size: 14px;
-            font-weight: 500;
-        }
-
-        .current-time {
-            color: var(--secondary);
-            font-family: monospace;
-            font-size: 16px;
-        }
-
-        .controls {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        select {
-            padding: 8px 12px;
-            border: 1px solid var(--border);
-            border-radius: 6px;
-            background-color: var(--card-bg);
-            font-size: 14px;
-            cursor: pointer;
-        }
-
-        .grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 20px;
-            flex: 1;
-        }
-
+        h1 { margin: 0; font-size: 24px; font-weight: 700; }
+        .status-bar { display: flex; gap: 20px; align-items: center; font-size: 14px; font-weight: 500; }
+        .current-time { color: var(--secondary); font-family: monospace; font-size: 16px; }
+        .controls { display: flex; align-items: center; gap: 10px; }
+        select { padding: 8px 12px; border: 1px solid var(--border); border-radius: 6px; background-color: var(--card-bg); font-size: 14px; cursor: pointer; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; flex: 1; }
         .card {
-            background-color: var(--card-bg);
-            border-radius: 12px;
-            padding: 20px;
-            box-shadow: var(--shadow);
-            transition: transform 0.2s, box-shadow 0.2s;
-            cursor: pointer;
-            border: 1px solid var(--border);
-            display: flex;
-            flex-direction: column;
-            position: relative;
-            overflow: hidden;
-            text-decoration: none;
-            color: inherit;
+            background-color: var(--card-bg); border-radius: 12px; padding: 20px;
+            box-shadow: var(--shadow); transition: transform 0.2s, box-shadow 0.2s;
+            cursor: pointer; border: 1px solid var(--border);
+            display: flex; flex-direction: column; position: relative;
+            overflow: hidden; text-decoration: none; color: inherit;
         }
-
-        .card:hover {
-            transform: translateY(-5px);
-            box-shadow: var(--hover-shadow);
-            border-color: #333;
-        }
-
-        .card-header {
-            margin-bottom: 15px;
-        }
-
-        .card-title {
-            font-size: 18px;
-            font-weight: 700;
-            margin: 0 0 8px 0;
-            word-break: keep-all;
-        }
-
-        .organizer {
-            font-size: 13px;
-            color: var(--secondary);
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
-
-        .card-body {
-            margin-top: auto;
-        }
-
-        .dates {
-            font-size: 13px;
-            color: var(--secondary);
-            margin-bottom: 15px;
-            background: #f1f1f1;
-            padding: 8px;
-            border-radius: 6px;
-        }
-
-        .date-row {
-            display: flex;
-            justify-content: space-between;
-        }
-
-        .timer-badge {
-            display: inline-block;
-            padding: 6px 12px;
-            border-radius: 20px;
-            font-size: 14px;
-            font-weight: 700;
-            color: white;
-            width: fit-content;
-        }
-
-        /* 상태별 색상 정의 */
-        .timer-badge.ended {
-            background-color: var(--secondary);
-        }
-        
-        /* 3일 미만: 엄청 빨간색 + 펄스 애니메이션 */
-        .timer-badge.critical {
-            background-color: #d32f2f; 
-            animation: pulse 2s infinite;
-        }
-
-        /* 7일 미만: 주황색 */
-        .timer-badge.warning {
-            background-color: #f57c00;
-        }
-
-        /* 30일 미만: 노란색 (가독성을 위해 글자색 검정) */
-        .timer-badge.notice {
-            background-color: #fbc02d;
-            color: #333333;
-        }
-
-        /* 30일 이상: 초록색 */
-        .timer-badge.safe {
-            background-color: #388e3c;
-        }
-
-        @keyframes pulse {
-            0% { opacity: 1; }
-            50% { opacity: 0.8; }
-            100% { opacity: 1; }
-        }
-
-        footer {
-            margin-top: 40px;
-            padding-top: 20px;
-            padding-bottom: 10px;
-            border-top: 1px solid var(--border);
-            text-align: center;
-            color: var(--secondary);
-            font-size: 14px;
-            font-weight: 500;
-        }
-
+        .card:hover { transform: translateY(-5px); box-shadow: var(--hover-shadow); border-color: #333; }
+        .card-header { margin-bottom: 15px; }
+        .card-title { font-size: 18px; font-weight: 700; margin: 0 0 8px 0; word-break: keep-all; }
+        .organizer { font-size: 13px; color: var(--secondary); display: flex; align-items: center; gap: 5px; }
+        .card-body { margin-top: auto; }
+        .dates { font-size: 13px; color: var(--secondary); margin-bottom: 15px; background: #f1f1f1; padding: 8px; border-radius: 6px; }
+        .date-row { display: flex; justify-content: space-between; }
+        .timer-badge { display: inline-block; padding: 6px 12px; border-radius: 20px; font-size: 14px; font-weight: 700; color: white; width: fit-content; }
+        .timer-badge.ended { background-color: var(--secondary); }
+        .timer-badge.critical { background-color: #d32f2f; animation: pulse 2s infinite; }
+        .timer-badge.warning { background-color: #f57c00; }
+        .timer-badge.notice { background-color: #fbc02d; color: #333333; }
+        .timer-badge.safe { background-color: #388e3c; }
+        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.8; } 100% { opacity: 1; } }
+        footer { margin-top: 40px; padding-top: 20px; padding-bottom: 10px; border-top: 1px solid var(--border); text-align: center; color: var(--secondary); font-size: 14px; font-weight: 500; }
     </style>
 </head>
 <body>
-
 <div class="container">
     <header>
-        <div>
-            <h1>방갤 갤 대회 목록 대시보드</h1>
-        </div>
+        <div><h1>방갤 갤 대회 목록 대시보드</h1></div>
         <div class="status-bar">
             <div id="clock" class="current-time">로딩 중...</div>
             <div class="controls">
@@ -220,34 +86,26 @@
             </div>
         </div>
     </header>
-
-    <div id="eventGrid" class="grid">
-        </div>
-
-    <footer>
-        made by Bangbung Kim
-    </footer>
+    <div id="eventGrid" class="grid"></div>
+    <footer>made by Bangbung Kim</footer>
 </div>
-
 <script>
-    const events = [{"제목": "2025 연말기념 방붕이 연령대 조사", "시작일": "2025-10-31", "종료일": "2025-12-30", "링크": "https://gall.dcinside.com/mgallery/board/view/?id=bang_dream&no=5729461", "주최자_닉": "우이골댕이", "주최자_식별코드": "pine5337", "js_end_date": "2025-12-30 23:59:59"}, {"제목": "2025 연말기념 방붕이 최애밴드 조사", "시작일": "2025-11-18", "종료일": "2025-12-30", "링크": "https://gall.dcinside.com/mgallery/board/view/?id=bang_dream&no=5755602", "주최자_닉": "우이골댕이", "주최자_식별코드": "pine5337", "js_end_date": "2025-12-30 23:59:59"}, {"제목": "조별과제 대회", "시작일": "2025-11-20", "종료일": "2026-02-10 23:59", "링크": "https://gall.dcinside.com/mgallery/board/view/?id=bang_dream&no=5758326", "주최자_닉": "퓨니카", "주최자_식별코드": "attorney2164", "js_end_date": "2026-02-10 23:59"}, {"제목": "천하제일 누이스토리 대회", "시작일": "2025-12-01", "종료일": "2026-02-28", "링크": "https://gall.dcinside.com/mgallery/board/view/?id=bang_dream&no=5774209", "주최자_닉": "ㅇㅇ", "주최자_식별코드": "geyuwukdoch13", "js_end_date": "2026-02-28 23:59:59"}, {"제목": "아베무지카 커버대회", "시작일": "2025-12-15", "종료일": "2026-03-15 23:59", "링크": "https://gall.dcinside.com/mgallery/board/view/?id=bang_dream&no=5798862", "주최자_닉": "iVanEz", "주최자_식별코드": "tide8415", "js_end_date": "2026-03-15 23:59"}, {"제목": "뱅드림의 경지2 시즌2", "시작일": "2025-12-06", "종료일": "2026-02-13 18:00", "링크": "https://gall.dcinside.com/mgallery/board/view/?id=bang_dream&no=5782301", "주최자_닉": "방갤제일검", "주최자_식별코드": "shabby1229", "js_end_date": "2026-02-13 18:00"}, {"제목": "다음내한예측대회", "시작일": "2025-12-25", "종료일": "", "링크": "https://gall.dcinside.com/mgallery/board/view/?id=bang_dream&no=5824373", "주최자_닉": "momokan", "주최자_식별코드": "hers0556", "js_end_date": " 23:59:59"}, {"제목": "세트리 대회", "시작일": "2025-12-26", "종료일": "2026-01-03 00:00", "링크": "https://gall.dcinside.com/mgallery/board/view/?id=bang_dream&no=5826452", "주최자_닉": "미스미_하츠네", "주최자_식별코드": "hunt6910", "js_end_date": "2026-01-03 00:00"}, {"제목": "로젤리아인증", "시작일": "2025-12-03", "종료일": "2025-12-31 23:59", "링크": "https://gall.dcinside.com/mgallery/board/view/?id=bang_dream&no=5777404", "주최자_닉": "야마부키", "주최자_식별코드": "prideofjeju", "js_end_date": "2025-12-31 23:59"}, {"제목": "세타 카오루 랜드 입주하기 대회", "시작일": "2025-12-21", "종료일": "2025-12-30 23:59", "링크": "https://gall.dcinside.com/mgallery/board/view/?id=bang_dream&no=5808703", "주최자_닉": "potato-man", "주최자_식별코드": "nyam007", "js_end_date": "2025-12-30 23:59"}, {"제목": "방캐토대회", "시작일": "2025-12-31", "종료일": "2026-01-01", "링크": "https://gall.dcinside.com/mgallery/board/view/?id=bang_dream&no=5841097", "주최자_닉": "후에엥", "주최자_식별코드": "hanasakigawa", "js_end_date": "2026-01-01 23:59:59"}, {"제목": "시롱이 애호 대회", "시작일": "2026-01-02", "종료일": "2026-02-18 23:59", "링크": "https://gall.dcinside.com/mgallery/board/view/?id=bang_dream&no=5847686", "주최자_닉": "시롱이", "주최자_식별코드": "adequate8063", "js_end_date": "2026-02-18 23:59"}];
+    const events = [{"제목": "2025 연말기념 방붕이 연령대 조사", "시작일": "2025-10-31", "종료일": "2025-12-30", "링크": "https://gall.dcinside.com/mgallery/board/view/?id=bang_dream&no=5729461", "주최자_닉": "우이골댕이", "주최자_식별코드": "pine5337", "js_end_date": "2025-12-30 23:59:59"}, {"제목": "2025 연말기념 방붕이 최애밴드 조사", "시작일": "2025-11-18", "종료일": "2025-12-30", "링크": "https://gall.dcinside.com/mgallery/board/view/?id=bang_dream&no=5755602", "주최자_닉": "우이골댕이", "주최자_식별코드": "pine5337", "js_end_date": "2025-12-30 23:59:59"}, {"제목": "조별과제 대회", "시작일": "2025-11-20", "종료일": "2026-02-10 23:59", "링크": "https://gall.dcinside.com/mgallery/board/view/?id=bang_dream&no=5758326", "주최자_닉": "퓨니카", "주최자_식별코드": "attorney2164", "js_end_date": "2026-02-10 23:59:00"}, {"제목": "천하제일 누이스토리 대회", "시작일": "2025-12-01", "종료일": "2026-02-28", "링크": "https://gall.dcinside.com/mgallery/board/view/?id=bang_dream&no=5774209", "주최자_닉": "ㅇㅇ", "주최자_식별코드": "geyuwukdoch13", "js_end_date": "2026-02-28 23:59:59"}, {"제목": "아베무지카 커버대회", "시작일": "2025-12-15", "종료일": "2026-03-15 23:59", "링크": "https://gall.dcinside.com/mgallery/board/view/?id=bang_dream&no=5798862", "주최자_닉": "iVanEz", "주최자_식별코드": "tide8415", "js_end_date": "2026-03-15 23:59:00"}, {"제목": "뱅드림의 경지2 시즌2", "시작일": "2025-12-06", "종료일": "2026-02-13 18:00", "링크": "https://gall.dcinside.com/mgallery/board/view/?id=bang_dream&no=5782301", "주최자_닉": "방갤제일검", "주최자_식별코드": "shabby1229", "js_end_date": "2026-02-13 18:00:00"}, {"제목": "다음내한예측대회", "시작일": "2025-12-25", "종료일": "2026-12-31", "링크": "https://gall.dcinside.com/mgallery/board/view/?id=bang_dream&no=5824373", "주최자_닉": "momokan", "주최자_식별코드": "hers0556", "js_end_date": "2026-12-31 23:59:59"}, {"제목": "세트리 대회", "시작일": "2025-12-26", "종료일": "2026-01-03 00:00", "링크": "https://gall.dcinside.com/mgallery/board/view/?id=bang_dream&no=5826452", "주최자_닉": "미스미_하츠네", "주최자_식별코드": "hunt6910", "js_end_date": "2026-01-03 00:00:00"}, {"제목": "로젤리아인증", "시작일": "2025-12-03", "종료일": "2025-12-31 23:59", "링크": "https://gall.dcinside.com/mgallery/board/view/?id=bang_dream&no=5777404", "주최자_닉": "야마부키", "주최자_식별코드": "prideofjeju", "js_end_date": "2025-12-31 23:59:00"}, {"제목": "세타 카오루 랜드 입주하기 대회", "시작일": "2025-12-21", "종료일": "2025-12-30 23:59", "링크": "https://gall.dcinside.com/mgallery/board/view/?id=bang_dream&no=5808703", "주최자_닉": "potato-man", "주최자_식별코드": "nyam007", "js_end_date": "2025-12-30 23:59:00"}, {"제목": "방캐토대회", "시작일": "2025-12-31", "종료일": "2026-01-01", "링크": "https://gall.dcinside.com/mgallery/board/view/?id=bang_dream&no=5841097", "주최자_닉": "후에엥", "주최자_식별코드": "hanasakigawa", "js_end_date": "2026-01-01 23:59:59"}, {"제목": "시롱이 애호 대회", "시작일": "2026-01-02", "종료일": "2026-02-18 23:59", "링크": "https://gall.dcinside.com/mgallery/board/view/?id=bang_dream&no=5847686", "주최자_닉": "시롱이", "주최자_식별코드": "adequate8063", "js_end_date": "2026-02-18 23:59:00"}];
 
     function updateClock() {
         const now = new Date();
-        const options = { 
-            year: 'numeric', month: 'long', day: 'numeric', 
-            hour: '2-digit', minute: '2-digit', second: '2-digit',
-            hour12: false 
-        };
+        const options = { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false };
         document.getElementById('clock').innerText = now.toLocaleString('ko-KR', options);
     }
 
     function getRemainingTime(endDateStr) {
+        if (!endDateStr) return { status: 'ended', text: '날짜 미정/종료' };
+        
         const now = new Date();
         const end = new Date(endDateStr.replace(' ', 'T'));
         const diff = end - now;
 
-        if (diff < 0) {
+        if (isNaN(diff) || diff < 0) {
             return { status: 'ended', text: '종료됨' };
         }
 
@@ -260,17 +118,10 @@
         text += hours + '시간 ';
         text += minutes + '분 남음';
 
-        // 상태 결정 로직
-        let status = '';
-        if (days < 3) {
-            status = 'critical'; // 빨강
-        } else if (days < 7) {
-            status = 'warning';  // 주황
-        } else if (days < 30) {
-            status = 'notice';   // 노랑
-        } else {
-            status = 'safe';     // 초록
-        }
+        let status = 'safe';
+        if (days < 3) status = 'critical';
+        else if (days < 7) status = 'warning';
+        else if (days < 30) status = 'notice';
         
         return { status: status, text: text, diff: diff };
     }
@@ -282,16 +133,15 @@
 
         const sortedEvents = [...events].sort((a, b) => {
             if (sortType === 'endingSoon') {
+                if (!a.js_end_date) return 1; 
+                if (!b.js_end_date) return -1;
                 const timeA = new Date(a.js_end_date.replace(' ', 'T'));
                 const timeB = new Date(b.js_end_date.replace(' ', 'T'));
                 const now = new Date();
-                
                 const diffA = timeA - now;
                 const diffB = timeB - now;
-                
                 const valA = diffA < 0 ? 9999999999999 : diffA;
                 const valB = diffB < 0 ? 9999999999999 : diffB;
-                
                 return valA - valB;
             } else if (sortType === 'startDate') {
                 return new Date(a.시작일) - new Date(b.시작일);
@@ -302,27 +152,21 @@
 
         sortedEvents.forEach(evt => {
             const remaining = getRemainingTime(evt.js_end_date);
-            
             const card = document.createElement('a');
             card.className = 'card';
             card.href = evt.링크;
             card.target = '_blank';
-
             card.innerHTML = `
                 <div class="card-header">
                     <h3 class="card-title">${evt.제목}</h3>
-                    <div class="organizer">
-                        <span>주최: ${evt.주최자_닉} (${evt.주최자_식별코드})</span>
-                    </div>
+                    <div class="organizer"><span>주최: ${evt.주최자_닉} (${evt.주최자_식별코드})</span></div>
                 </div>
                 <div class="card-body">
                     <div class="dates">
                         <div class="date-row"><span>시작:</span> <span>${evt.시작일}</span></div>
                         <div class="date-row"><span>종료:</span> <span>${evt.종료일}</span></div>
                     </div>
-                    <div class="timer-badge ${remaining.status}">
-                        ${remaining.text}
-                    </div>
+                    <div class="timer-badge ${remaining.status}">${remaining.text}</div>
                 </div>
             `;
             grid.appendChild(card);
@@ -333,7 +177,6 @@
     updateClock();
     renderEvents();
     setInterval(renderEvents, 60000);
-
 </script>
 </body>
 </html>
