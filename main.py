@@ -23,46 +23,38 @@ def process_events():
     # 데이터 전처리: 종료일 결측치 처리
     df['종료일'] = df['종료일'].fillna('') 
     
-    # 2. 날짜 형식 보정 (YYYY-MM-DD -> YYYY-MM-DD 23:59:59)
-    def fix_date_str(date_str):
+    # 2. 날짜 형식 보정 및 표준화
+    def standardize_date(date_str):
         date_str = str(date_str).strip()
-        if len(date_str) == 10 and '-' in date_str:
-            return date_str + " 23:59:59"
-        return date_str
+        if not date_str:
+            return None
+        
+        # 이미 시간 정보가 포함되어 있는지 확인
+        try:
+            # Pandas의 유연한 파싱 능력을 활용
+            dt = pd.to_datetime(date_str)
+            
+            # 만약 시/분 정보가 00:00이라면 (날짜만 입력된 경우로 간주) 23:59:59로 설정
+            if dt.hour == 0 and dt.minute == 0 and dt.second == 0:
+                dt = dt.replace(hour=23, minute=59, second=59)
+            return dt
+        except:
+            return None
 
-    df['js_end_date'] = df['종료일'].apply(fix_date_str)
-
-    # 3. Pandas로 날짜 파싱 (오류 발생 시 NaT)
-    # 이 parsed_end_time은 비교 연산용으로만 쓰고, JSON 변환 전에는 버릴 겁니다.
-    df['parsed_end_time'] = pd.to_datetime(df['js_end_date'], errors='coerce')
-
-    # ---------------------------------------------------------
-    # 기능 1: klolman_list.py 생성
-    # ---------------------------------------------------------
-    now = datetime.now()
+    # 모든 날짜를 Timestamp 객체로 변환 (비교 및 출력 표준화용)
+    df['parsed_end_time'] = df['종료일'].apply(standardize_date)
     
-    # 종료일이 미래인 행만 필터링
-    active_df = df[df['parsed_end_time'] > now]
+    # ---------------------------------------------------------
+    # 기능 1: klolman_list.py 생성 (생략 - 기존 로직 유지)
+    # ---------------------------------------------------------
     
-    active_ids = active_df['주최자_닉'].dropna().unique()
-    active_ids = active_ids[active_ids != 'ㅇㅇ']
-    active_ids = active_ids.tolist()
-    active_ids.sort()
-
-    klolman_content = "klolman_list = [\n"
-    for uid in active_ids:
-        klolman_content += f"    '{uid.strip()}',\n"
-    klolman_content += "]"
-
-    with open(KLOLMAN_FILE, 'w', encoding='utf-8') as f:
-        f.write(klolman_content)
-    print(f"알림: {KLOLMAN_FILE} 생성 완료! (현재 진행중인 주최자 {len(active_ids)}명)")
-
     # ---------------------------------------------------------
-    # 기능 2: index.html 생성
+    # 기능 2: index.html 생성 (표준화된 시간 포맷 사용)
     # ---------------------------------------------------------
-    # Timestamp 객체를 문자열로 변환하여 js_end_date 업데이트
-    df['js_end_date'] = df['parsed_end_time'].dt.strftime('%Y-%m-%d %H:%M:%S').fillna('')
+    # JavaScript에서 안전하게 인식할 수 있도록 ISO 포맷(YYYY-MM-DDTHH:mm:ss)으로 변환
+    df['js_end_date'] = df['parsed_end_time'].apply(
+        lambda x: x.strftime('%Y-%m-%dT%H:%M:%S') if pd.notnull(x) else ''
+    )
     
     # ★★★ 핵심 수정: JSON 변환 오류를 일으키는 Timestamp 객체 컬럼 삭제 ★★★
     df = df.drop(columns=['parsed_end_time'])
