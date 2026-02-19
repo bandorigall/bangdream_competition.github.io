@@ -1,0 +1,4 @@
+<a href="https://bandorigall.github.io/bangdream_competition.github.io/" 
+   style="font-size: 24px; font-weight: bold; text-decoration: none; color: #1d2c4d;">
+   (링크) 방갤 갤 대회 목록
+</a>
