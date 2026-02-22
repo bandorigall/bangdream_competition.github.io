@@ -20,44 +20,75 @@ def process_events():
         print(f"CSV 읽기 실패: {e}")
         return
 
-    # 데이터 전처리: 종료일 결측치 처리
+    # 데이터 전처리
     df['종료일'] = df['종료일'].fillna('') 
+    if '시작일' not in df.columns:
+        df['시작일'] = ''
+    else:
+        df['시작일'] = df['시작일'].fillna('')
     
     # 2. 날짜 형식 보정 및 표준화
-    def standardize_date(date_str):
+    def standardize_end_date(date_str):
         date_str = str(date_str).strip()
         if not date_str:
             return None
         
-        # 이미 시간 정보가 포함되어 있는지 확인
         try:
-            # Pandas의 유연한 파싱 능력을 활용
             dt = pd.to_datetime(date_str)
-            
-            # 만약 시/분 정보가 00:00이라면 (날짜만 입력된 경우로 간주) 23:59:59로 설정
             if dt.hour == 0 and dt.minute == 0 and dt.second == 0:
                 dt = dt.replace(hour=23, minute=59, second=59)
             return dt
         except:
             return None
 
-    # 모든 날짜를 Timestamp 객체로 변환 (비교 및 출력 표준화용)
-    df['parsed_end_time'] = df['종료일'].apply(standardize_date)
+    def parse_start_date(date_str):
+        date_str = str(date_str).strip()
+        if not date_str:
+            return None
+        try:
+            return pd.to_datetime(date_str)
+        except:
+            return None
+
+    df['parsed_start_time'] = df['시작일'].apply(parse_start_date)
+    df['parsed_end_time'] = df['종료일'].apply(standardize_end_date)
     
     # ---------------------------------------------------------
-    # 기능 1: klolman_list.py 생성 (생략 - 기존 로직 유지)
+    # 기능 1: klolman_list.py 생성 (진행 중 대회 필터링 적용)
     # ---------------------------------------------------------
+    try:
+        now = pd.Timestamp.now()
+        
+        # 시작일 <= 현재 <= 종료일 조건 만족 여부 확인
+        active_mask = (df['parsed_start_time'].notnull()) & \
+                      (df['parsed_end_time'].notnull()) & \
+                      (df['parsed_start_time'] <= now) & \
+                      (now <= df['parsed_end_time'])
+        
+        active_df = df[active_mask]
+        
+        # 식별코드만 추출하여 리스트로 저장
+        klolman_codes = active_df['주최자_식별코드'].dropna().drop_duplicates().tolist()
+        
+        with open(KLOLMAN_FILE, 'w', encoding='utf-8') as f:
+            f.write("klolman_list = [\n")
+            for code in klolman_codes:
+                f.write(f"    '{code}',\n")
+            f.write("]\n")
+        print(f"알림: {KLOLMAN_FILE} 파일 생성 완료.")
+    except Exception as e:
+        print(f"klolman_list 생성 실패: {e}")
     
     # ---------------------------------------------------------
     # 기능 2: index.html 생성 (표준화된 시간 포맷 사용)
     # ---------------------------------------------------------
-    # JavaScript에서 안전하게 인식할 수 있도록 ISO 포맷(YYYY-MM-DDTHH:mm:ss)으로 변환
+    # JavaScript에서 안전하게 인식할 수 있도록 ISO 포맷으로 변환
     df['js_end_date'] = df['parsed_end_time'].apply(
         lambda x: x.strftime('%Y-%m-%dT%H:%M:%S') if pd.notnull(x) else ''
     )
     
     # ★★★ 핵심 수정: JSON 변환 오류를 일으키는 Timestamp 객체 컬럼 삭제 ★★★
-    df = df.drop(columns=['parsed_end_time'])
+    df = df.drop(columns=['parsed_start_time', 'parsed_end_time'])
     
     # 딕셔너리 변환 및 JSON 직렬화
     events_list = df.to_dict(orient='records')
