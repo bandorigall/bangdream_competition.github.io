@@ -70,11 +70,12 @@ def process_events():
         # 식별코드만 추출하여 리스트로 저장
         klolman_codes = active_df['주최자_식별코드'].dropna().drop_duplicates().tolist()
         
+        output_data = {
+            "klolman_list": klolman_codes
+        }
+        
         with open(KLOLMAN_FILE, 'w', encoding='utf-8') as f:
-            f.write("klolman_list = [\n")
-            for code in klolman_codes:
-                f.write(f"    '{code}',\n")
-            f.write("]\n")
+            json.dump(output_data, f, ensure_ascii=False, indent=2)
         print(f"알림: {KLOLMAN_FILE} 파일 생성 완료.")
     except Exception as e:
         print(f"klolman_list 생성 실패: {e}")
