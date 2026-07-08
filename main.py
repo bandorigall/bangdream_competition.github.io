@@ -275,6 +275,7 @@ def process_events():
     renderEvents();
     setInterval(renderEvents, 60000);
 </script>
+<script src="nav.js"></script>
 </body>
 </html>
     """

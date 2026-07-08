@@ -29,7 +29,8 @@ else
 fi
 
 echo "[+] Pulling from remote..."
-git pull
+# --no-edit: 머지 커밋 에디터 멈춤 방지 / --no-rebase: pull 전략 명시
+git pull --no-rebase --no-edit
 if [ $? -ne 0 ]; then
     echo ""
     echo "###################################################"

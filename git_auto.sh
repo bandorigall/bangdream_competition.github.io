@@ -34,8 +34,9 @@ else
 fi
 
 # 4. Pull (원격 저장소 변경사항 가져오기)
+#    --no-edit: 머지 커밋 에디터(vim) 멈춤 방지 / --no-rebase: pull 전략 명시
 echo "[+] Pulling from remote..."
-git pull
+git pull --no-rebase --no-edit
 if [ $? -ne 0 ]; then
     echo ""
     echo "###################################################"
