@@ -1,0 +1,77 @@
+================================================================
+갤대회 (bangdream_competition.github.io) — 모듈 개요 (기술 명세)
+================================================================
+
+0. 목적
+  방갤(디시 뱅드림 갤러리) 이용자가 여는 갤 대회를 카드형 대시보드로
+  집계·표시한다. 진행 중 대회의 주최자 식별코드를 별도 파일로 산출해
+  외부(디시콘/주작기 등)에서 소비할 수 있게 한다.
+  배포: GitHub Pages 정적 호스팅. 산출물은 index.html 단일 파일.
+
+1. 저장소 구성
+  events.csv          입력 데이터(단일 소스 오브 트루스). UTF-8.
+  main.py             빌드 스크립트(CSV → index.html + klolman_list.py).
+  klolman_list.py     빌드 산출물. JSON 형식(확장자만 .py). 진행 중 대회
+                      주최자 식별코드 배열.
+  index.html          빌드 산출물(정적). 브라우저가 직접 렌더.
+  nav.js              공통 상단 네비게이션 바(전 사이트 공용, 절대 URL).
+  main.bat            main.py 실행 배치.
+  git_auto.sh / git_auto_linux.sh  빌드→커밋→pull→push 자동화.
+  하이퍼링크.txt      외부 삽입용 링크 스니펫.
+
+2. 입력 스키마 (events.csv)
+  필수/사용 컬럼:
+    제목                대회명
+    주최자_닉           표시용 주최자 닉네임
+    주최자_식별코드     디시 식별코드(klolman_list 산출 키)
+    시작일              파싱 가능 날짜 문자열(비어도 됨)
+    종료일              파싱 가능 날짜 문자열(비어도 됨)
+    링크                카드 클릭 시 이동할 URL
+  결측 처리: 시작일/종료일 컬럼 부재 또는 빈 값 허용(''로 채움).
+
+3. 처리 파이프라인 (main.py: process_events)
+  3.1 로드: pandas.read_csv(encoding='utf-8').
+  3.2 날짜 표준화:
+      - parse_start_date: pd.to_datetime, 실패 시 None.
+      - standardize_end_date: pd.to_datetime 후 시각이 00:00:00이면
+        23:59:59로 보정(종료일을 '그 날 끝'으로 해석). 실패 시 None.
+  3.3 산출물 A — klolman_list.py:
+      진행중 마스크 = 시작 notnull ∧ 종료 notnull ∧ 시작<=now<=종료.
+      해당 행의 주최자_식별코드를 dropna·중복제거 후
+      {"klolman_list":[...]} 로 json.dump(ensure_ascii=False, indent=2).
+  3.4 산출물 B — index.html:
+      - js_end_date: parsed_end_time을 '%Y-%m-%dT%H:%M:%S' ISO 문자열로.
+      - Timestamp 객체 컬럼(parsed_start_time/parsed_end_time) drop
+        (JSON 직렬화 오류 방지).
+      - df.to_dict(orient='records') → json.dumps(ensure_ascii=False)로
+        events 배열을 HTML 템플릿에 f-string 인라인 주입.
+
+4. 프런트엔드 동작 (index.html 내 인라인 JS)
+  - updateClock(): 1초 간격 현재시각(ko-KR, 24h) 표시.
+  - getRemainingTime(endDateStr): 남은시간 계산 및 상태 분류.
+      status 임계값(잔여 일수 기준):
+        ended    종료/날짜미정(diff<0 또는 NaN)
+        critical days<3   (빨강, pulse 애니메이션)
+        warning  days<7   (주황)
+        notice   days<30  (노랑)
+        safe     그 외    (초록)
+  - renderEvents(): 정렬 후 카드 생성. 정렬 옵션:
+        endingSoon(기본) 마감 임박순. 종료된 건 9999999999999로 밀어 뒤로.
+        startDate         시작일 순.
+        title             제목 localeCompare.
+    카드는 <a> 요소로 링크(target=_blank).
+  - 갱신 주기: 시계 1초, 카드 재렌더 60초(setInterval).
+
+5. 빌드/배포 절차
+  main.bat 또는 python -m main → index.html·klolman_list.py 갱신 →
+  git_auto.sh 실행(add→commit→pull --no-rebase --no-edit→push).
+  Pages 배포는 push 후 자동.
+
+6. 설계 결정/제약
+  - 정적 사이트 원칙: 런타임 서버·DB 없음. 데이터 갱신 = CSV 수정 후 재빌드.
+  - 종료일 자정 보정으로 "마지막 날 23:59까지 진행"을 직관적으로 처리.
+  - klolman_list를 .py 확장자로 둔 것은 외부 파이썬에서 import 하기 위한
+    관례(내용은 순수 JSON이라 json.load도 가능).
+  - 타임존: pd.Timestamp.now()(로컬)와 JS Date(클라이언트 로컬) 사용 →
+    빌드 시점 진행중 판정(klolman_list)과 열람 시점 표시(카드)가
+    각각 다른 시계를 쓴다. 정밀 TZ 처리는 하지 않음.
