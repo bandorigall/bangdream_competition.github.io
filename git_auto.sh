@@ -60,6 +60,9 @@ fi
 echo ""
 echo "[OK] 빌드 + 커밋 + 푸시 완료!"
 
+# push_all.sh 등에서 SKIP_DEPLOY_WAIT=1 로 부르면 배포 대기/브라우저 열기 없이 즉시 종료
+[ -n "$SKIP_DEPLOY_WAIT" ] && exit 0
+
 # 6. 이 커밋의 GitHub Pages 배포가 끝날 때까지 기다린 뒤 브라우저 열기
 URL="https://bandorigall.github.io/bangdream_competition.github.io/"
 REPO="bandorigall/bangdream_competition.github.io"
