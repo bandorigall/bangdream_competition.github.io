@@ -1,5 +1,3 @@
 {
-  "klolman_list": [
-    "busy7727"
-  ]
+  "klolman_list": []
 }
